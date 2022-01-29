@@ -1,0 +1,6 @@
+domain WebUserUI {
+
+    D summary, main "This domain is associated with web UI code that serves the \"user\" side of a web site (vs the admin side)."
+
+    namespace space web.user
+}

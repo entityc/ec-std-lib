@@ -1,0 +1,20 @@
+domain JSONDTO extends DTO
+{
+    namespace space dto
+
+    D "Typical REST APIs use JSON as the data format medium for data."
+    D summary, main "This domain controls how the classes"
+    D summary, main "used for JSON based formatting will be generated."
+
+    naming entity {
+        suffix "Dto"
+    }
+
+    naming attribute {
+        primarykey id
+    }
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+}

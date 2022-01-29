@@ -1,0 +1,6 @@
+formatting {
+    format Default {
+        "ExpressionOperator.space.before": true,
+        "ExpressionOperator.space.after": true,
+    }
+}

@@ -1,0 +1,127 @@
+domain AdminUI {
+    namespace space web.admin
+
+    T "feature"
+    D summary, main "This domain allows you to customize how an admin console is constructed based on"
+    D summary, main "your entity model."
+    D "The customization is done by applying the tags described here on the entities, attributes and"
+    D "relationships in your model."
+    D ""
+    D "The admin console is comprised of basically three typs of web pages, each described below."
+    D ""
+    D "### Admin Home Page"
+    D ""
+    D "This is the top most page of the admin console. It can be configured to include summary views of the top level"
+    D "entities. From each object of an entity you can go to the detail page. To have an entity"
+    D "show up on this page, simply tag it with `home`. To also make it so the admin can create new"
+    D "objects of a home page entity, tag it with `edit`."
+    D ""
+    D "### Admin Detail Page"
+    D ""
+    D "Whenever you click on a link of an object it takes to this detail page. This will"
+    D "let an admin see and edit the object for the attributes that you choose, just tag them with `detail`."
+    D ""
+    D "Markdown for string attributes is also supported. Simply tag an attribute with `markdown` and when editing,"
+    D "the admin will be given a web-based markdown editor. As well, it will be rendered to HTML for viewing."
+    D ""
+    D "This page can also build a table for `many` relationships, just tag them with `detail`."
+    D "This table is considered a \"summary\" view of the entity on the other side of this relationship."
+    D "The columns of the table are attributes of the relationship entity and you can control which are visible in"
+    D "this summary table by tagging those attributes with the `summary` tag."
+    D ""
+    D "At the top of the admin detail page there are two configurable elements: a **breadcrumb bar** and a **headline**."
+    D ""
+    D "#### Breadcrumb bar"
+    D ""
+    D "A breadcrumb bar generally tells the user where they are in some kind of hierarchy or view history. In our case"
+    D "it represents the hierarchy of your model, starting with the `home` entities on the admin home page"
+    D "then cascades as the admin clicks on the relationships shown in a detail page."
+    D "Each item in the breadcrumb list is represented by an entity and you can customize how an entity's item will"
+    D "look using tags. A breadcrumb item can have three components:"
+    D ""
+    D "*prefix* *number*: *title*"
+    D ""
+    D "The *prefix* can be the entity's name, just tag the entity with `breadcrumb:prefix`."
+    D "The *number* can be from an integer attribute of the entity, just tag it with `breadcrumb:number`."
+    D "Finally the *title* can be from a string attribute of the entity, just tag it with `breadcrumb:title`."
+    D "Examples are: \"Module 1: Introduction\" (has all three components), \"Step 4\" (only has the *prefix* and *number*)."
+    D ""
+    D "#### Headline"
+    D ""
+    D "The headline lets the admin know what they are looking at without having to look at the individual attributes. You construct"
+    D "the headline from attributes of the entity or the entity name itself. Like a breadcrumb item, a headline can have three components:"
+    D ""
+    D "*prefix* *number*: *title*"
+    D ""
+    D "The *prefix* can be the entity's name, just tag the entity with `headline:prefix`."
+    D "The *number* can be from an integer attribute of the entity, just tag it with `headline:number`."
+    D "Finally the *title* can be from a string attribute of the entity, just tag it with `headline:title`."
+    D "Examples are: \"Module 1: Introduction\" (has all three components), \"Step 4\" (only has the *prefix* and *number*)."
+    D ""
+    D "### Admin New Object Page"
+    D ""
+    D "When the admin clicks on a \"New ...\" button, they will be taken to this page. There are no available"
+    D "customization tags for this page."
+    D ""
+
+    tagging entity {
+        tag "home" {
+            D "Placing this tag on an entity designates it to be included on the home page of the"
+            D "admin console."
+        }
+        tag "edit" {
+            D "When an entity is tagged with this tag the admin console home page will provide a button to allow you"
+            D "create new objects of this entity."
+        }
+        tag "headline:prefix" {
+            D "The headline is part of the detail page for an entity. Placing this tag on an entity means"
+            D "that the entity name will be part of the header part of this headline."
+        }
+        tag "breadcrumb:prefix" {
+            D "The breadcrumb bar is part of the detail page for an entity and it helps navigate the hierarchy of"
+            D "your admin console. Placing this tag on an entity means"
+            D "that the entity name will be used in the breadcrumb item for this entity."
+        }
+    }
+    tagging attribute {
+        tag "summary" {
+            D "Tagging an attribute with this tag will allow it to be included in a summary view of its entity."
+        }
+        tag "detail" {
+            D "Tagging an attribute with this tag will ensure that it will be included on the admin console detail page for"
+            D "the corresponding entity."
+        }
+        tag "headline:number" {
+            D "Tagging an integer attribute with this tag will include it in the headline as the number."
+        }
+        tag "headline:title" {
+            D "Tagging a string attribute with this tag will include it in the headline as the title."
+        }
+        tag "breadcrumb:number" {
+            D "Tagging an integer attribute with this tag will include it in the breadcrumb bar item as the number."
+        }
+        tag "breadcrumb:title" {
+            D "Tagging a string attribute with this tag will include it in the breadcrumb bar item as the title."
+        }
+        tag "markdown" {
+            D "If the text of a string attribute is markdown text, then tagging that attribute with this tag will"
+            D "both allow it to be rendered to HTML for display and also when the admin edits the attribute, a web-based"
+            D "markdown editor will be used."
+        }
+    }
+
+    tagging relationship {
+        tag "detail" {
+          D "Tagging a relationship with this tag will ensure that it will be included on the admin console detail page for"
+          D "the corresponding entity."
+        }
+        tag "display:attribute" {
+          D "When displaying a selected to-one relationship object, this tag should be assigned to the name of the"
+          D "attribute of the selected object that should be used."
+        }
+    }
+
+    naming attribute {
+        method standard
+    }
+}

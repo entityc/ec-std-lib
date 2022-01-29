@@ -1,0 +1,207 @@
+$[version 0.1.0]
+$[language java]
+$[domain Model]
+$[D summary "This template builds what are called Model classes."]
+$[D "This template builds what are called Model classes. A Model class is used to represent objects of"]
+$[D "an entity that are used by an application."]
+
+$[function generateDto
+  D "A function that generates the DTO class for just one entity or view."
+  (entityOrView D "The entity or view.",
+   module       D "The module of the entity or view."
+  )]
+  $[let _isView = entityOrView.isView]
+  $[let _entity = entityOrView]
+  $[if _isView]
+    $[let _entity = entityOrView.entity]
+  $[/if]
+  $[let domainEntityOrView = entityOrView|domain:Model]
+  $[capture dtoClassName]${domainEntityOrView|name}$[/capture]
+  $[file (domainEntityOrView.domain.namespace|path) (dtoClassName) "java"]
+//
+// This is the DTO class for entity:
+//
+//   Entity
+//     Name:        ${_entity|name}
+    $[if _entity.hasDescription]
+//     Description: ${_entity.description|wrap}
+    $[/if]
+    $[if _entity.hasTags]
+//     Tags:        [${_entity.tagsSeparatedBy("][")}]
+    $[/if]
+    $[if _isView]
+//
+//   View
+//     Name:        ${entityOrView|name}
+      $[if entityOrView.hasDescription]
+//     Description: ${entityOrView.description|wrap}
+      $[/if]
+    $[/if]
+//
+// THIS FILE IS GENERATED. DO NOT EDIT!!
+//
+package ${domainEntityOrView.domain.namespace};
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.UUID;
+
+$[* Import referenced enums *]
+    $[foreach entityOrView.attributes]
+      $[if attribute.type.isEnumType]
+import ${attribute.type|domain:Model|fullname};
+      $[/if]
+    $[/foreach]
+
+$[* add description *]
+    $[if entityOrView.hasDescription]
+// ${entityOrView.description}
+    $[/if]
+$[* Top of the class definition *]
+public class ${dtoClassName}
+{
+    $[if !_isView]
+      $[if _entity.hasPrimaryKey]
+$[* Primary Key *]
+        $[let _primaryKeyAttribute = _entity.primaryKeyAttribute]
+        $[if _primaryKeyAttribute.hasDescription]
+    // ${_primaryKeyAttribute.description}
+        $[else]
+    // PRIMARY KEY
+        $[/if]
+    private ${_primaryKeyAttribute.type|language} ${_primaryKeyAttribute|domain:Model|name};
+
+      $[/if]
+    $[/if]
+$[* Attributes *]
+    $[foreach entityOrView.attributes]
+      $[let attributeName=(attribute|domain:Model|name)]
+      $[let attributeType = (attribute.type|language)]
+      $[if attribute.type.isEntityType]
+        $[let attributeEntity = attribute.type]
+        $[let attributeType = (attributeEntity|domain:Model|name)]
+      $[/if]
+      $[if attribute.hasDescription]
+    // ${attribute.description}
+      $[/if]
+      $[if attribute.isArray]
+    private Set<${attributeType}> ${attributeName};
+      $[else]
+    private ${attributeType} ${attributeName};
+
+    public ${attributeType} get${attributeName|capitalize}() {
+        return ${attributeName};
+    }
+
+        $[if !attribute.isModification && !attribute.isCreation]
+    public void set${attributeName|capitalize}(${attributeType} ${attributeName}) {
+        this.${attributeName} = ${attributeName};
+    }
+
+        $[/if]
+      $[/if]
+
+    $[/foreach]
+$[* Relationships *]
+    $[let showRelationshipComment = true]
+    $[foreach ((entityOrView|domain:Model|view:Default).relationships) as relationship]
+      $[let _toEntity = relationship.to.entity.entity]
+      $[if _toEntity == null || _toEntity.isImplicit || _toEntity.isExtern || _toEntity.isIncluded]$[continue]$[/if]
+      $[let includeChildEntities = (_toEntity.space.name == entityOrView.space.name)]
+      $[let _toView = relationship.to.view]
+      $[if showRelationshipComment]
+    // RELATIONSHIPS
+
+        $[let showRelationshipComment = false]
+      $[/if]
+      $[if relationship.hasDescription]
+    // ${relationship.description}
+      $[/if]
+      $[if relationship.to.isOne]
+        $[let typeName = "String"]
+        $[if _toEntity.pkType != null]
+          $[let typeName = _toEntity.pkType|language]
+        $[/if]
+        $[if !includeChildEntities || relationship.isWithPrimaryKey]
+    private ${typeName} ${relationship.name}Id;
+        $[else]
+    private ${_toEntity|domain:Model|name} ${relationship.name};
+        $[/if]
+      $[elseif relationship.to.isMany]
+        $[if includeChildEntities]
+    private Set<${_toEntity|domain:Model|name}> ${relationship.name};
+        $[/if]
+      $[/if]
+
+    $[/foreach]
+}
+  $[/file]
+$[/function]
+
+$[**
+  The main() part of the teamplate.
+*]
+$[foreach space.modules]
+  $[if module.isIncluded]$[continue]$[/if]
+  $[foreach module.entities]
+    $[if entity.isImplicit || entity.isExtern]$[continue]$[/if]
+    $[call generateDto(entityOrView:entity)]
+  $[/foreach]
+$[/foreach]
+
+$[***********]
+$[*  ENUMS  *]
+$[***********]
+$[foreach space.modules]
+  $[foreach module.enums]
+    $[if enum.isExtern]$[continue]$[/if]
+    $[file (domain.namespace|path) (enum|domain|name) "java"]
+//
+// This is class for enum:
+//
+//   Name:        ${enum.name}
+      $[if enum.hasDescription]
+//   Description: ${entity.description|wrap}
+      $[/if]
+      $[if enum.hasTags]
+//   Tags:        [${entity.tagsSeparatedBy("][")}]
+      $[/if]
+//
+// THIS FILE IS GENERATED. DO NOT EDIT!!
+//
+package ${domain.namespace};
+
+public enum ${enum|domain|name} {
+      $[foreach enum.items]
+        $[if item.hasDescription]
+    // ${item.description}
+        $[/if]
+    ${item|domain|name}(${item.value}),
+      $[/foreach]
+    ;
+
+    ${enum|domain|name}(int numberValue) {
+        this.numberValue = numberValue;
+    }
+
+    private int numberValue;
+
+    public int getNumberValue() {
+        return numberValue;
+    }
+
+    static public ${enum|domain|name} numberValueOf(int numberValue) {
+        for (${enum|domain|name} item : values()) {
+            if (item.numberValue == numberValue) {
+                return item;
+            }
+        }
+        return null;
+    }
+}
+
+    $[/file]
+  $[/foreach]
+$[/foreach]

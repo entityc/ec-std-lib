@@ -1,0 +1,247 @@
+$[language md]
+$[D summary, main "This template creates documentation for templates in markdown format. It does this for an"]
+$[D summary, main "entire directory tree."]
+$[D "At each directory level it looks for template files and if any are"]
+$[D "found it generates a `README.md` file documenting all the templates of the directory."]
+
+$[*********************************************************************************************************************]
+$[function documentPublisher
+  D "Given a reference to a publisher, this will extract information such as its outlets." 
+  (publisher
+   D "The publisher to document." 
+  )
+]
+#### `${publisher.namespace}`
+
+${publisher.description}
+
+    $[if publisher.hasOutlets]
+The following outlets are offered by this publisher:
+
+| Outlet | Description |
+|---|---|
+        $[foreach outlet in publisher.outlets]
+| `${outlet.name}` | ${outlet.hasDescription ? outlet.description:"*no description*"}|
+        $[/foreach]
+    $[/if]
+
+$[/function]
+$[*********************************************************************************************************************]
+$[function documentAuthor
+  D "Given a reference to an author, this will extract information such as the authoring to"
+  D "outlets." 
+  (author
+   D "The author to document." 
+  )
+]
+    $[if author.publisherNamespaces.isEmpty]
+    $[/if]
+    $[capture publishers]
+        $[foreach publisherNamespace in author.publisherNamespaces]
+`${publisherNamespace}`$[if !publisherNamespace#last], $[/if]
+        $[/foreach]
+    $[/capture]
+#### To Publisher: ${publishers}
+
+${author.description}
+
+    $[if author.hasChildOutletAuthors]
+        $[let intermediates = author.hasChildOutletsWithIntermediateParents]
+This author publishes to the following $[if intermediates]extended publishers and $[/if]outlets:
+
+$[if intermediates]|Extended Publisher$[/if]| Outlet | Description | Phase | Scope
+$[if intermediates]|---$[/if]|---|---|---|---|
+        $[foreach childAuthor in author.childOutletAuthors]
+            $[let childDescription = childAuthor.hasDescription ? childAuthor.description:"*no description*"]
+$[if intermediates]|`${childAuthor.intermediateParentNamespace}`$[/if]| `${childAuthor.outletName}` | ${childDescription}|${childAuthor.phase}|${childAuthor.scope}|
+        $[/foreach]
+    $[/if]
+
+$[/function]
+$[*********************************************************************************************************************]
+$[function documentFunction
+  D "Given a reference to a function, this will extract information such calls to other"
+  D "functions, descriptions like this, etc. and build a markdown document of the function." 
+  (fun
+   D "The function to document." 
+  )
+]
+#### ${fun.name|title} - ${fun.name}()
+
+    $[if fun.hasDescription]
+${fun.description}
+
+    $[/if]
+    $[if fun.hasInputs]
+##### Inputs
+
+|Name|Description|
+|---|---|
+        $[foreach arg in fun.inputArguments]
+|`${arg.name}`|${arg.description}|
+        $[/foreach]
+    $[/if]
+
+    $[if fun.hasOutputs]
+##### Outputs
+
+|Name|Description|
+|---|---|
+        $[foreach arg in fun.outputArguments]
+|`${arg.name}`|${arg.description}|
+        $[/foreach]
+    $[/if]
+
+$[/function]
+$[*********************************************************************************************************************]
+$[function documentTemplate
+  D "Given a reference to a template, this will extract information such as its functions,"
+  D "descriptions like this, etc. and build a markdown document of the template." 
+  (template
+   D "The template to document." ,
+   rootDirectory
+   D "The top most directory of the documentation tree." ,
+   directory
+  )
+]
+
+<a name="${template|name|dashes|lowercase}"></a>
+## ${template|title}
+
+    $[if template.hasDescription]
+${template.description}
+    $[/if]
+
+    $[if template.hasReferencedTags || template.hasReferencedDomains]
+| |References|
+|---|---|
+        $[if template.hasReferencedTags]
+| **Tags** |$[foreach tag in template.referencedTags]`${tag}` $[/foreach]|
+        $[/if]
+        $[if template.hasReferencedDomains]
+| **Domains** |$[foreach domainName in template.referencedDomainNames]`${domainName}` $[/foreach]|
+        $[/if]
+    $[/if]
+
+    $[if template.hasDescriptionInCategory("detail")]
+${template.descriptionInCategory("detail")}
+    $[/if]
+
+    $[if template.hasImportedTemplates]
+### Imported Templates
+
+| Name | Description |
+|---|---|
+        $[foreach subTemplate in template.importedTemplates|sort]
+            $[let subTemplateFile = rootDirectory.findTemplateFileWithName(subTemplate.name)]
+            $[let link = null]
+            $[if subTemplateFile != null]
+                $[let link = subTemplateFile.directory.pathRelativeToPath(directory.path)]
+            $[/if]
+            $[if link != null && link != ""]
+| [`${subTemplate.name}`](${link}) | ${subTemplate.descriptionInCategory("summary")} |
+            $[else]
+| `${subTemplate.name}` | ${subTemplate.descriptionInCategory("summary")} |
+            $[/if]
+        $[/foreach]
+
+    $[/if]
+    $[if template.hasPublishers]
+### Publishers
+
+        $[foreach publisher in template.publishers]
+            $[call documentPublisher(publisher:publisher)]
+
+        $[/foreach]
+    $[/if]
+    $[if template.hasAuthors]
+### Authors
+
+        $[foreach author in template.authors]
+            $[call documentAuthor(author:author)]
+
+        $[/foreach]
+    $[/if]
+    $[if template.hasFunctions]
+### Functions
+
+        $[foreach fun in template.functions]
+            $[call documentFunction(fun:fun)]
+
+        $[/foreach]
+    $[/if]
+$[/function]
+$[*********************************************************************************************************************]
+$[function documentDirectory
+  D "Looks in a specified directory and if there are any templates there it creates a README file"
+  D "that documents those templates." 
+  (configuration
+   D "Configuration in use." ,
+   rootDirectory
+   D "The top most directory of the documentation tree." ,
+   directory
+   D "The directory" ,
+   recursive
+   D "If true it then recursively does this for sub directories." 
+  )
+]
+    $[if directory.hasFilesWithExtension("eml")]
+        $[file directory "README" "md"]
+            $[preserve Introduction]
+# ${directory.name|capitalize}
+
+Write a nice introduction here.
+
+            $[/preserve]
+            $[let parsedTemplates = @[]@]
+            $[let functionOnlyTemplates = @[]@]
+            $[let workerTemplates = @[]@]
+            $[foreach templateFile in directory.filesWithExtension("eml")]
+                $[let template = configuration.parseTemplate(templateFile)]
+                $[if !template.hasDescriptionInCategory("summary")]$[continue]$[/if]
+                $[do parsedTemplates.add(template)]
+                $[if template.hasOnlyFunctions]
+                    $[do functionOnlyTemplates.add(template)]
+                $[else]
+                    $[do workerTemplates.add(template)]
+                $[/if]
+            $[/foreach]
+
+<a name="template-summary"></a>
+## Template Summary
+
+            $[if workerTemplates.count > 0]
+|Template|Description|
+|---|---|
+                $[foreach template in workerTemplates.values|sort]
+| [`${template.name}`](#${template.name|dashes|lowercase}) | ${template.descriptionInCategory("summary")} |
+                $[/foreach]
+            $[/if]
+
+            $[if functionOnlyTemplates.count > 0]
+
+The following templates only contain functions.
+
+|Template|Description|
+|---|---|
+                $[foreach template in functionOnlyTemplates.values|sort]
+| [`${template.name}`](#${template.name|dashes|lowercase}) | ${template.descriptionInCategory("summary")} |
+                $[/foreach]
+            $[/if]
+
+Each of the template files will be covered in more detail below.
+
+            $[foreach template in parsedTemplates.values|sort]
+                $[call documentTemplate(template:template,rootDirectory:rootDirectory,directory:directory)]
+            $[/foreach]
+        $[/file]
+    $[/if]
+    $[if recursive]
+        $[foreach subDir in directory.subDirectories]
+            $[call documentDirectory(configuration:configuration,rootDirectory:rootDirectory,directory:subDir,recursive:recursive)]
+        $[/foreach]
+    $[/if]
+$[/function]
+$[*********************************************************************************************************************]
+$[let topDir = rootTemplate.primaryOutputDirectory]
+$[call documentDirectory(configuration:configuration,rootDirectory:topDir,directory:topDir,recursive:true)]

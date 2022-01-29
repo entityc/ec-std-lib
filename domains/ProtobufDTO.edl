@@ -1,0 +1,35 @@
+domain ProtobufDTO extends DTO {
+
+    D summary, main "The Game is written to use Protobuf as the format medium of data. This domain controls how classes"
+    D summary, main "used for Protobuf based formatting will be generated."
+
+    namespace space protobuf
+
+    naming module {
+        method capitalize
+    }
+
+    naming entity {
+        method standard
+    }
+
+    naming attribute {
+        method standard
+    }
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+}
+
+domain Converter {
+
+    D summary, main "Converting Java objects to JSON is pretty straight forward, however for Protobuf it is more involved"
+    D summary, main "so this domain is used to control the generation of classes that perform the mapping of Java objects to"
+    D summary, main "protobuf data."
+
+    naming entity {
+        prefix "PBL"
+        suffix "Converter"
+    }
+}

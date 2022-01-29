@@ -1,0 +1,14 @@
+domain Service {
+
+    namespace space service
+
+    D summary "The classes generated for this domain provide the business logic for the application."
+    D "As part of a Spring Framework based micro-service there are classes that are responsible"
+    D "for providing services that include the business logic of many of the features provided by the "
+    D "microservice. The generation of these classes is controlled by this domain."
+
+    naming entity {
+        method standard
+        suffix "Service"
+    }
+}

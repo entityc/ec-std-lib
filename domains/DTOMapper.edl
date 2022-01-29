@@ -1,0 +1,18 @@
+domain DTOMapper
+{
+    namespace space mapper
+
+    D summary, main "The generation of classes involved in mapping model object into dto objects is controlled by this domain."
+
+    naming entity {
+        suffix "Mapper"
+    }
+
+    naming attribute {
+        primarykey id
+    }
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+}

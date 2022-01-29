@@ -1,0 +1,77 @@
+domain DocumentBuilder {
+    T "feature"
+    D summary, main "This domain allows one to customize how code is generated that will take entity attribute"
+    D summary, main "values and build a document with them."
+
+    D ""
+    D "The type of document that can be created will have some hierarchy where it has sections and subsections."
+    D "You have some control of how section titles are constructed as well. It works best when its used to"
+    D "render a document format such as markdown that has the required formatting elements."
+    D ""
+    D "If we look at a typical structured document we have sections that have a header portion and a body. You can"
+    D "have sections inside other sections to create hierarchy. This creation of hierarchy is also supported where a specific entity would"
+    D "represent a specific level in the document and its \"child\" entities (those it has a relationship with)"
+    D "can be used to create sub-sections."
+    D ""
+    D "A section heading for an entity can be constructed from elements of the entity. The section heading has three"
+    D "parts:"
+    D ""
+    D "*prefix* *number*: *title*"
+    D ""
+    D "The *prefix* can come from only the entity name and will be a title-ized version of the entity name. Just tag"
+    D "the entity with `section:prefix` to have it included in the heading."
+    D "The *number* can come from an integer attribute of entity, just tag the attribute with `section:number`."
+    D "If either a prefix or number is specified, it will be followed by a colon `:` character."
+    D "The *title* can come from a string attribute, just tag it with `section:title`. All three elements are"
+    D "**optional**. Example headings are: \"Module 1: Introduction\" (all three elements), \"Summary\" (only title),"
+    D "\"Step 5\" (prefix and number only)."
+    D ""
+
+    tagging entity {
+        tag "top" {
+            D "This should be placed on any entity that represents the top of a document. By tagging an entity with"
+            D "this tag you are essentially saying you want code that will generate a document where this entity"
+            D "defines the top content of the document."
+        }
+        tag "section:prefix" {
+            D "Tagging an entity with this tag indicates that the name of the entity should be used in any section header"
+            D "of the document that is constructed for this entity."
+        }
+    }
+
+    tagging attribute {
+        tag "section:number" {
+            D "This should be used on an integer attribute that provides a number in a sequence that is relavent for"
+            D "objects of this entity in a particular scope. For instance if the entity was Step, this could be used"
+            D "to construct section headings Step 1, Step 2, etc."
+        }
+        tag "if:multiple" {
+            D "This is used in conjunction with the `section:number` tag to indicate that it should only include"
+            D "the number if the total number of such sections will be greater than 1."
+        }
+        tag  "section:title" {
+            D "This is applied to any string attribute that is to be used as a title text for a section header."
+        }
+        tag "section:body" {
+            D "The string attribute that is to supply the body of the section should be tagged with this tag."
+        }
+        tag "subsection" {
+            D "Tagging a string attribute with this tag causes its text to be included as a sub-section (after"
+            D "the section body) where its sub-section header is taken from the attribute name. If you want the"
+            D "sub-section header to be different than the attribute name, simply rename the attribute in this"
+            D "domain. If you don't want a sub-section header, simply additionally add the tag `untitled`."
+        }
+        tag "untitled" {
+            D "This is used in conjunction with the `subsection` tag to indicate that you don't want the sub-section"
+            D "to have a heading."
+        }
+    }
+
+    tagging relationship {
+        tag "subsection" {
+            D "Tagging a relationship with this tag indicates you want to create a sub-section for each object"
+            D "that exists in that relationship. The formatting for its section header is defined by that entity."
+            D "This is how you can create hierarchy in the document."
+        }
+    }
+}

@@ -1,0 +1,6 @@
+domain Utils {
+
+    D summary, main "The Utils domain is simply used for a namespace (provided by the specializer) to install utility classes."
+
+    namespace space util
+}

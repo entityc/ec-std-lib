@@ -1,0 +1,102 @@
+$[version 0.1.0]
+$[language java]
+$[domain ClientAPI]
+$[let className = "RestApi"]
+$[file (domain.namespace|path) (className) "java"]
+package ${domain.namespace};
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class ${className}
+{
+    /**
+     * MEMBER VARIABLES
+     */
+    private static RestApiService restApiService;
+
+    /**
+     * METHODS
+     */
+    public static RestApiService getService()
+    {
+        if (restApiService == null) {
+            Retrofit retrofit = new Retrofit.Builder().baseUrl("http://${hostname}/").addConverterFactory(GsonConverterFactory.create()).build();
+            restApiService = retrofit.create(RestApiService.class);
+        }
+        return restApiService;
+    }
+}
+$[/file]
+
+$[let className = "RestApiService"]
+$[file (domain.namespace|path) (className) "java"]
+package ${domain.namespace};
+
+import java.util.List;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.GET;
+import retrofit2.http.DELETE;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import retrofit2.http.Body;
+import retrofit2.http.Headers;
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
+import retrofit2.http.Multipart;
+import retrofit2.http.Part;
+$[receive distinct imports]
+
+public interface RestApiService
+{
+$[foreach module in space.modules]
+  $[foreach entity in module.entities]
+    $[send imports]
+import ${entity|domain:Model|fullname};
+    $[/send]
+    //============================
+    // ${entity|name|title}
+    //============================
+
+    $[let modelName = entity|domain:Model|name]
+    // Create ${entity.name}
+    @Headers({"Content-Type: application/json","Accept: application/json"})
+    @POST("${apiPathPrefix}/${entity|domain:APIPath|name}")
+    Call<${modelName}> create${modelName}(@Body ${modelName} object);
+
+    // Update ${entity.name}
+    @Headers({"Content-Type: application/json","Accept: application/json"})
+    @PUT("${apiPathPrefix}/${entity|domain:APIPath|name}/{id}")
+    Call<${modelName}> update${modelName}(@Path("id") long id, @Body ${modelName} object);
+
+    // Get ${entity.name} By ID
+    @Headers({"Accept: application/json"})
+    @GET("${apiPathPrefix}/${entity|domain:APIPath|name}/{id}")
+    Call<${modelName}> get${modelName}ById(@Path("id") long id);
+
+    // Get ${entity.name} List
+    @Headers({"Accept: application/json"})
+    @GET("${apiPathPrefix}/${entity|domain:APIPath|name}")
+    Call<List<${modelName}>> get${modelName}List(@Query("start") int start, @Query("limit") int limit);
+
+$[foreach entity.relationships]
+$[if relationship.isParent]
+    // Get ${entity.name} List By ${relationship|domain:APIPath|name|capitalize}
+    @Headers({"Accept: application/json"})
+    @GET("${apiPathPrefix}/${entity|domain:APIPath|name}/${relationship|domain:APIPath|name}/{id}")
+    Call<List<${modelName}>> get${modelName}ListBy${relationship|domain:APIPath|name|capitalize}(@Path("id") long parentId, @Query("start") int start, @Query("limit") int limit);
+
+$[/if]
+$[/foreach]
+    // Delete ${entity.name} By ID
+    @DELETE("${apiPathPrefix}/${entity|domain:APIPath|name}/{id}")
+    Call delete${modelName}ById(@Path("id") long id);
+
+  $[/foreach]
+$[/foreach]
+}
+
+$[/file]

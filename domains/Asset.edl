@@ -1,0 +1,16 @@
+domain Asset {
+
+    D summary, main "This domain defines tags that allow you to customize how asset related entities are treated."
+
+    tagging entity {
+        tag "file" {
+            D "Placing this tag on an entity indicates that the entity is used for keeping track of file assets."
+        }
+    }
+
+    tagging attribute {
+        tag "mimeType" {
+            D "An attribute tagged with this represents a standard mime type (content type)."
+        }
+    }
+}

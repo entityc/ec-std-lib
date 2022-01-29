@@ -1,0 +1,5 @@
+domain Exception {
+    D summary, main "This domain provides a namespace for exception classes."
+
+    namespace space exception
+}

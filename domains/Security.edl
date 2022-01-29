@@ -1,0 +1,116 @@
+domain Security {
+
+    namespace space security
+
+    T "feature"
+    D summary, main "This domain is concerned about the security and user administration features in the application."
+    D ""
+    D "### Authentication (Login)"
+    D ""
+    D "Applications that have user specific data (that is, require users to register and have an account) define"
+    D "some type of \"user\" entity. This entity also usually has an attribute for storing their username (whether it"
+    D "be an email address or a simple string) and an attribute for storing an encoded password."
+    D ""
+    D "To denote which entity represents your \"user\" entity, simply tag it with `user`. Inside this entity"
+    D "the attribute to be used for their username should be tagged with `login:username` and the attribute to be"
+    D "used to store their encoded password should be tagged with `login:password`. If the username attribute is also"
+    D "an email address, you can tag it with `email` and it will be treated as such."
+    D ""
+    D "### Authorization (Roles)"
+    D ""
+    D "Roles are a way to group users for the purpose of controlling access to resources on the server. There is"
+    D "usually specific code that controls how each role has access to specific resources. This domain provides"
+    D "tags that let you configure not just the roles but how the roles enforce specific types of access."
+    D ""
+    D "Lets start with defining the roles. There needs to be an `enum` that has an item for each role you"
+    D "want to use to control access. This enum must be used in the `user` tagged entity as a `many` attribute"
+    D "(meaning a user can be assigned multiple roles). First tag the enum with `role` then tag each"
+    D "item of the enum with a tag that starts with `role:` followed by the name of the role (e.g., `role:admin`)."
+    D "You will then use these item tags when constructing tags applied to entites that you want to control"
+    D "access to."
+    D ""
+    D "There are two supported access types: read and write. Read access is for GET endpoints and write is for"
+    D "POST, PUT and DELETE endpoints. To set write access for an entity, tag the entity with a tag that starts"
+    D "with `access:write:` and ends with your role tag (e.g., `access:write:role:admin`). This will make sure"
+    D "only users with that role can perform write actions on objects of that entity. The same can be done for"
+    D "read access as well. If you don't tag an entity with an access type, it will imply that any authenticated"
+    D "user can perform that operation."
+    D ""
+    D "### User Administration"
+    D ""
+    D ""
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+
+    tagging enum {
+        tag "role" {
+            D "The enum that represents security roles should be tagged with this tag."
+        }
+    }
+
+    tagging enumItem {
+        tag startsWith "role:" {
+            D "Tagging an enum item with a tag that starts with this means you want to"
+            D "designate this as one of the supported roles. The enum of this item should also"
+            D "be tagged with \"role\". The entire tag will represent the role name that can be used when tagging"
+            D "entities for setting read, write and delete access roles."
+        }
+    }
+
+    tagging entity {
+        tag "user" {
+            D "An entity tagged with this indicates that it represents a logged in user."
+            D "You entire entity model should have only one entity tagged with this. It is used"
+            D "during code generation to know where user specific data is stored."
+        }
+        tag startsWith "access:read:" {
+            D "An entity that has a tag that starts with this indicates it is trying to assign a role that"
+            D "has read access. The remaining part of the tag represents the role. If you also tag an enum item"
+            D "of the designated \"role\" enum with this tag, it will assign that role to have read access."
+        }
+        tag startsWith "access:write:" {
+            D "An entity that has a tag that starts with this indicates it is trying to assign a role that"
+            D "has write access. The remaining part of the tag represents the role. If you also tag an enum item"
+            D "of the designated \"role\" enum with this tag, it will assign that role to have write access."
+        }
+        tag startsWith "access:delete:" {
+            D "An entity that has a tag that starts with this indicates it is trying to assign a role that"
+            D "has delete access. The remaining part of the tag represents the role. If you also tag an enum item"
+            D "of the designated \"role\" enum with this tag, it will assign that role to have delete access."
+            D "If no role is assigned for delete access, write access role(s) will be used."
+        }
+        tag "access:object:level" {
+            D "When an entity is tagged with this tag, it means that you want to enable the ability to control"
+            D "user level access unique for each object of this entity."
+        }
+    }
+
+    tagging attribute {
+        tag "name:first" {
+            D "This tag should be placed on an attribute of the entity tagged with \"user\" that represents"
+            D "the user's first name."
+        }
+        tag "name:last" {
+            D "This tag should be placed on an attribute of the entity tagged with \"user\" that represents"
+            D "the user's last name."
+        }
+        tag "email" {
+            D "This tag should be placed on an attribute of the entity tagged with \"user\" that represents"
+            D "the user's email address."
+        }
+        tag "login:username" {
+            D "This tag should be placed on an attribute of the entity tagged with \"user\" that represents"
+            D "the user's username (which could also be their email)."
+        }
+        tag "login:password" {
+            D "This tag should be placed on an attribute of the entity tagged with \"user\" that represents"
+            D "the user's password (encoded or not)."
+        }
+        tag "login:enabled" {
+            D "This tag should be placed on an attribute of the entity tagged with \"user\" that indicates if"
+            D "the user account is enabled."
+        }
+    }
+}

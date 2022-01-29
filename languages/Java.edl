@@ -1,0 +1,60 @@
+language java {
+    self this
+    comments {
+        line "//"
+        blockStart "/*"
+        blockEnd "*/"
+    }
+    types {
+        boolean boolean
+        boolean Boolean nullable
+        int32 int
+        int32 Integer nullable
+        int64 long
+        int64 Long nullable
+        float float
+        float Float nullable
+        double double
+        double Double nullable
+        string String nullable
+        date Date nullable
+        uuid UUID nullable
+        array List nullable
+        map Map nullable
+        enum enum nullable
+        byte "byte[]" nullable
+    }
+    operators {
+        plus "+"
+        minus "-"
+        times "*"
+        divide "/"
+        modulo "%"
+        logical_not "!"
+        logical_and "&&"
+        logical_or "||"
+        bitwise_not "~"
+        bitwise_and "&"
+        bitwise_or "|"
+        bitwise_xor "^"
+        is_equal "=="
+        not_equal "!="
+        greater_than ">"
+        greater_than_or_equal ">="
+        less_than "<"
+        less_than_or_equal "<="
+        select "?" ":"
+        dot "."
+    }
+
+    keywords {
+        abstract assert boolean break byte case catch char class continue const default do double else
+        enum exports extends final finally float for goto if implements import instanceof int interface
+        long module native new package private protected public requires return short static strictfp
+        super switch synchronized this throw throws transient try var void volatile while
+    }
+
+    functions {
+        length(string str) "${str}.length()"
+    }
+}

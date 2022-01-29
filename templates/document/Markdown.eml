@@ -1,0 +1,109 @@
+$[version 0.5.0]
+$[language md]
+$[domain DTO]
+$[D summary, main "This template generates documentation in Markdown format of the modules, entities and attributes"]
+$[D summary, main "of a particular space."]
+$[foreach space.modules]
+$[file "" (module.name|capitalize) "md"]
+
+# ${module.name|title}
+$[if module.hasDescription]
+${module.description}
+
+$[/if]
+$[if module.typedefCount > 0]
+## Typedefs
+
+$[foreach module.typedefs]
+### ${typedef.name|words|uppercase}
+$[if typedef.hasDescription]
+${typedef.description}
+
+$[/if]
+|Bitfield|Low Bit|Width|Description|
+|:---|:---:|:---:|:---|
+$[foreach typedef.bitFields]
+|`${bitField.name}`|${bitField.low}|${bitField.width}|${bitField.description}${bitField.description ? "" : " "}|
+$[/foreach]
+$[/foreach]
+$[/if]
+
+## Entities
+
+$[foreach module.entities]
+$[let _className = entity|domain:Model|name|words|uppercase]
+
+### ${_className}
+
+$[if entity.description]
+${entity.description}
+
+$[/if]
+$[if entity.attributeCount > 0]
+|Field|Type|Description|
+|:---|:---:|:---|
+$[if entity.hasPrimaryKey]
+|`${entity.primaryKeyAttribute|domain|name}`|${entity.pkType|language}|${entity.primaryKeyAttribute.description}${entity.primaryKeyAttribute.hasDescription ? "" : "*Primary Key*"}|
+$[/if]
+$[foreach entity.attributes]
+$[capture attributeDescriptionOrSpace]${attribute.description}${attribute.hasDescription ? "" : " "}$[/capture]
+$[if attribute.type.isEnumType]
+|`${attribute|domain|name}`|[${attribute.type|language}]|${attributeDescriptionOrSpace}|
+$[elseif attribute.type != null]
+|`${attribute|domain|name}`|${attribute.type|language}${attribute.isArray?"[]":""}|${attributeDescriptionOrSpace}|
+$[/if]
+$[/foreach]
+$[if entity.hasBitFields]
+#### Bit Fields
+$[foreach entity.attributes]
+$[if attribute.hasBitFields]
+##### `${attribute.type|language} ${attribute.name}`
+
+|Name|Low Bit|Width|Description|
+|:---|:---:|:---:|:---|
+$[foreach attribute.bitFields]
+$[if bitField.isUnused]
+|---|${bitField.low}|${bitField.width}|_Unused bits_|
+$[else]
+|`${bitField.name}`|${bitField.low}|${bitField.width}|${bitField.description}${bitField.hasDescription ? "" : " "}|
+$[/if]
+$[/foreach]
+$[/if]
+$[/foreach]
+$[/if]
+$[else]
+_No attributes_
+$[/if]
+$[if entity.hasRelationships]
+
+#### Relationships
+
+This entity has the following relationships with other entities:
+
+|Type|Other Entity|Relationship Name|
+|:---:|:---|:---|
+$[foreach entity.relationships]
+|${relationship.to.isMany ? "many" : "one"}|`${relationship.to.entity.name}`|`${relationship.name}`|
+$[/foreach]
+$[/if]
+$[/foreach]
+
+$[if module.enumCount > 0]
+## Enums
+
+$[foreach module.enums]
+### ${enum|domain|name|words|uppercase}
+
+$[if enum.hasDescription]
+${enum.description}
+
+$[/if]
+|Item|Description|
+|:---|:---|
+$[foreach enum.items]
+|`${item|domain|name}`|${item.description}${item.hasDescription ? "" : " "}|
+$[/foreach]
+$[/if]
+
+$[/file]
+$[/foreach]

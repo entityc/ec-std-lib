@@ -1,0 +1,13 @@
+domain StaticLocalization {
+
+    D summary, main "Static Localization refers to localized text that is part of the application itself and is"
+    D summary, main "**not** part of the user content."
+
+    naming entity {
+        method underscoreLowercase
+        prefix "loc."
+    }
+    naming attribute {
+        method underscoreLowercase
+    }
+}

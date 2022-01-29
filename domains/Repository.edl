@@ -1,0 +1,12 @@
+domain Repository
+{
+    namespace space repository
+
+    D summary "The classes generated for this domain are responsible for moving data to and from the database."
+    D "As part of a Spring Framework based micro-service there are classes that are responsible"
+    D "for moving data to and from the database. The generation of these classes is controlled by this domain."
+
+    naming entity {
+        suffix "Repository"
+    }
+}

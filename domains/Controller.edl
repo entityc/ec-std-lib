@@ -1,0 +1,21 @@
+domain Controller {
+
+    namespace space controller
+
+    D summary, main "This domain is used for the generation of code that implements the first layer of the application's"
+    D summary, main "endpoints."
+    D "These classes not only define the endpoints but can specify security role enforcement and can check for errors"
+    D "in how the endpoint was used by the client."
+
+    naming entity {
+        suffix "Controller"
+    }
+}
+domain APIPath {
+
+    D summary, main "How URL paths are constructed in the API is controlled by this domain."
+
+    naming entity, attribute {
+        method dashesLowercase
+    }
+}

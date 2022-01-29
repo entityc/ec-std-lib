@@ -1,0 +1,151 @@
+$[version 0.5.0]
+$[language wiki]
+$[domain DTO]
+$[D summary, main "This template generates documentation in Confluence format of the modules, entities and attributes"]
+$[D summary, main "of a particular space."]
+$[foreach space.modules]
+$[file "" (module.name|capitalize) "wiki"]
+
+# ${module.name|title}
+$[if module.hasDescription]
+${module.description}
+
+$[/if]
+$[if module.typedefCount > 0]
+## Typedefs
+
+$[foreach module.typedefs]
+### ${typedef.name|words|uppercase}
+$[if typedef.hasDescription]
+${typedef.description}
+
+$[/if]
+||Bitfield||Low Bit||Width||Description||
+$[foreach typedef.bitFields]
+|{{${bitField.name}}}|${bitField.low}|${bitField.width}|${bitField.description}${bitField.description ? "" : " "}|
+$[/foreach]
+$[/foreach]
+$[/if]
+
+## Entities
+
+$[foreach module.entities]
+$[let _className = entity|domain:Model|name]
+
+h1. ${_className}
+
+$[if entity.description]
+h2. Description
+${entity.description}
+
+$[/if]
+$[let hasAssets = false]
+$[if entity.attributeCount > 0]
+h2. Attributes
+||Field||Type||Description||
+$[if entity.hasPrimaryKey]
+|{{${entity.primaryKeyAttribute|domain|name}}}|${entity.pkType|language}|${entity.primaryKeyAttribute.description}${entity.primaryKeyAttribute.hasDescription ? "" : "*Primary Key*"}|
+$[/if]
+$[foreach entity.attributes as attribute]
+$[capture attributeDescriptionOrSpace]${attribute.description}${attribute.hasDescription ? "" : " "}$[/capture]
+$[if attribute.type.isEnumType]
+|{{${attribute|domain|name}}}|[${attribute.type|language}]|${attributeDescriptionOrSpace}|
+$[elseif attribute.secondaryEntityIsTagged("asset:collection") || attribute.secondaryEntityIsTagged("asset:file")]
+$[let hasAssets = true]
+$[else]
+|{{${attribute|domain|name}}}|${attribute.type|language}${attribute.isArray?"[]":""}|${attributeDescriptionOrSpace}|
+$[/if]
+$[/foreach]$[*attributes*]
+$[if entity.hasBitFields]
+h3. Bit Fields
+$[foreach entity.attributes]
+$[if attribute.hasBitFields]
+h4. {{${attribute.type|language} ${attribute.name}}}
+
+||Name||Low Bit||Width||Description||
+$[foreach attribute.bitFields]
+$[if bitField.isUnused]
+|---|${bitField.low}|${bitField.width}|_Unused bits_|
+$[else]
+|{{${bitField.name}}}|${bitField.low}|${bitField.width}|${bitField.description}${bitField.hasDescription ? "" : " "}|
+$[/if]
+$[/foreach]$[*bitFields*]
+$[/if]
+$[/foreach]$[*attributes*]
+$[/if]
+$[if hasAssets]
+
+h2. Assets
+
+$[function assetSection(attribute, collectionAttribute)]
+$[let fullAttributeName = attribute.name]
+$[let fullAttributeIdentifier = attribute.name]
+$[let hasCollection = collectionAttribute != null]
+$[if hasCollection]
+$[capture fullAttributeName]${collectionAttribute.name}${attribute.name|capitalize}$[/capture]
+$[capture fullAttributeIdentifier]${collectionAttribute.name}.${attribute.name}$[/capture]
+$[/if]
+h3. ${fullAttributeName|title}
+
+${attribute.description}
+
+||Attribute Name||Asset Entity||Content Type||
+|{{${fullAttributeIdentifier}}}|{{${attribute.getTypeEntity().name}}}|${attribute.contentType}|
+
+||Attribute Name||Type||Description||
+$[foreach attribute.getTypeEntity().attributes as secondaryAttribute]
+|{{${fullAttributeIdentifier}.${secondaryAttribute.name}}}|${secondaryAttribute.type|language}|${secondaryAttribute.description}|
+$[/foreach]
+
+$[/function]
+$[foreach entity.attributes as attribute]
+$[if attribute.secondaryEntityIsTagged("asset:collection") || attribute.secondaryEntityIsTagged("asset:file")]
+$[if attribute.secondaryEntityIsTagged("asset:collection")]
+$[let secondaryEntity = attribute.type]
+$[foreach secondaryEntity.attributes as secondaryAttribute]
+$[call assetSection(attribute:secondaryAttribute, collectionAttribute:attribute)]
+$[/foreach]
+$[else]
+$[call assetSection(attribute:attribute, collectionAttribute:null)]
+$[/if]
+$[/if]
+$[/foreach]
+$[/if]
+$[else]
+_No attributes_
+$[/if]
+$[if entity.hasRelationships]
+
+h2. Relationships
+
+This entity has the following relationships with other entities:
+
+||Type||Other Entity||Relationship Name||
+$[foreach entity.relationships]
+|${relationship.to.isMany ? "many" : "one"}|{{${relationship.to.entity.name}}}|{{${relationship.name}}}|
+$[/foreach]
+$[/if]
+$[/foreach]
+
+$[if module.enumCount > 0]
+## Enums
+
+$[foreach module.enums]
+h1. {{${enum|domain|name}}} Enum
+
+$[if enum.hasDescription]
+h2. Description
+${enum.description}
+
+$[/if]
+h2. Items
+||Item||Description||
+$[foreach enum.items]
+|{{${item|domain|name}}}|${item.description}${item.hasDescription ? "" : " "}|
+$[/foreach]
+
+$[/foreach]
+$[/if]
+
+$[/file]
+$[/foreach]

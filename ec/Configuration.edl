@@ -1,0 +1,21 @@
+space NotUsed {
+}
+
+configuration Documentation {
+    directory Templates {
+      path "templates"
+    }
+
+    directory Domains {
+      path "domains"
+    }
+
+    templates {
+        template TemplateMarkdown {
+            output primary Templates
+        }
+        template DomainDocs {
+            output primary Domains
+        }
+    }
+}

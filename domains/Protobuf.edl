@@ -1,0 +1,82 @@
+domain Protobuf {
+    D summary, main "The classes created for this domain are responsible for how the protocol file is created."
+    namespace space protobuf
+
+    naming module {
+        method underscoreLowercase
+    }
+
+    naming entity {
+        method standard
+    }
+
+    attributes {
+        rename 'optional' to notRequired
+    }
+
+    naming attribute {
+        method underscoreLowercase
+    }
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+
+    enum GameTextureType {
+        naming enumItem {
+            method underscoreUppercase
+            suffix "_TEXTURE"
+        }
+    }
+
+    view Proto {
+        relationships {
+            include to-one
+            include to-many
+        }
+    }
+
+/*
+    entity GameTerrainRelease {
+        view Proto {
+            relationships {
+                include to-many entity GameTerrainMapRelease
+            }
+        }
+    }
+
+    entity GameTerrainMapRelease {
+        view Proto {
+            relationships {
+                include to-one with primarykey
+            }
+        }
+    }
+
+    entity GameMapRelease {
+        view Proto {
+            relationships {
+                include to-one
+                include to-many
+            }
+        }
+    }
+
+    entity GameMap {
+        view Proto {
+            relationships {
+                exclude to-many releases
+                exclude to-many versions
+            }
+        }
+    }
+    entity MapRouteVersionRelease {
+        view Proto {
+            relationships {
+                include to-one entity MapRoute
+                include to-one entity MapRouteVersion
+            }
+        }
+    }
+    */
+}

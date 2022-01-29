@@ -1,0 +1,89 @@
+domain Localization {
+
+    T "feature"
+    D summary, main "The Localization domain is used for configurating code generation related to localization."
+    D ""
+    D "Localization of application text is often handled/supported by the particular application framework being"
+    D "used. This feature domain is not concerned just about that but mostly about adding code to your application"
+    D "so that the dynamic content of application can be stored in multiple languages (localized). In order to"
+    D "do this it will require that you define specific entities and attributes that are tagged in such a way"
+    D "that supporting code can be generated."
+    D ""
+    D "### Discussion"
+    D ""
+    D "Normally text can be stored in a simple `string` attribute. Of course, text in only one language can be"
+    D "stored this way. To expand this to multiple languages you essentially need three other entities:"
+    D ""
+    D "- An entity that represents human languages. This should be tagged with `language`."
+    D ""
+    D "- An entity that represents the translation of the content in a specific language. This will contain the"
+    D "  the actual localized text. The entity should be tagged with `content:localized` and the attribute of this"
+    D "  entity that contains the localized text should be tagged as `content:text`. This entity should also have"
+    D "  a `one` relationship with the `language` entity."
+    D ""
+    D "- An entity that represents the text you want to localize as **content**. The original text attribute is then"
+    D "  replaced by a relationship to this content entity. This will allow it to be expanded to multiple languages."
+    D "  This entity should be tagged with `content` and have a `many` relationship with the `content:localized`"
+    D "  entity."
+    D ""
+    D "If an application is going to adopt such a localization system then its very likely it will also need"
+    D "to support showing content in a user's preferred language. That is, it would be nice if there were methods"
+    D "available that would automatically resolve some content to a language that the user has designated as their"
+    D "preferred language. To support this, the entity that represents users of the system should be tagged with"
+    D "`user` and should have a relationship with the `language` entity that is tagged with `language:preferred`."
+    D "Also, for each content field (relationship) that we want to have this ability, we need to define a"
+    D "`virtual string` attribute that is tagged with `content` that assigned a tag value of"
+    D "the name of the relationship that corresponds to the content. For instance if you have a relationship"
+    D "named `summaryContent` then the `virtual string` attribute tag would be `\"content\" = \"summaryContent\"`."
+    D "This will ensure code is generated for that `virtual string` attribute to automatically supply the preferred"
+    D "language localization for the logged in user."
+    D ""
+    D "### Reference"
+    D ""
+    D "For reference, the tags for this feature domain are described below:"
+
+    tagging entity {
+        tag "language" {
+            D "Indicates that the entity keeps track of human languages. This will be used by the"
+            D "localization feature to keep track of the user's preferred language and also to"
+            D "keep track of language specific text."
+        }
+        tag "content" {
+            D "An entity that represents content as not language specific but just the content itself should be tagged"
+            D "with this tag. This entity should have a one-to-many relationship with an entity that keeps track of"
+            D "the content in a language specific way."
+        }
+        tag "content:localized" {
+            D "An entity that represents language specific content should be tagged with this tag. This entity should"
+            D "have as its parent entity an entity tagged with `content`. Also, the entity should have a relationship"
+            D "with an entity tagged with `human:language`. Essentially this entity provides the localized content"
+            D "for all supported languages for all content."
+        }
+    }
+
+    tagging attribute {
+        tag "content" {
+            D "When applying the tag `content` to a virtual attribute it denotes that it is part of a localization"
+            D "pattern whereby the value of the tag is the name of a relationship of the same entity and that"
+            D "relationship is to an entity tagged with a `content` tag. Code for this virtual attribute will be"
+            D "synthesized such that it has the content's text in the user's preferred language."
+        }
+        tag "content:text" {
+            D "This should be used to tag an attribute in the entity tagged with `content:localized` that represents"
+            D "the actual localized text. The language of this text should be that of the `language` tagged"
+            D "entity associated with the parent entity of this attribute."
+        }
+        tag "language:code" {
+            D "This should be used to tag the attribute of an entity tagged with `language` and represents"
+            D "an attribute that contains the ISO 639‑1 code of a language."
+        }
+    }
+
+    tagging relationship {
+        tag "language:preferred" {
+            D "This tag is used to indicate the relationship of the user entity that represents the preferred"
+            D "language of the user. It must be placed on a relationship belonging to an entity tagged with `user`"
+            D "and the relationship must be to an entity that is tagged with `language`."
+        }
+    }
+}

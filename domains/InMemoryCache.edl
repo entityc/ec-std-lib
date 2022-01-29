@@ -1,0 +1,26 @@
+domain InMemoryCache {
+
+    T "feature"
+    D summary, main "An in-memory cache is one that stays in RAM while a the microservice instance is running"
+    D summary, main "but is not persistent and must re-populate after the microservice is shut down and restarted."
+    D summary, main "The cache is used only to cache objects of an entity by its unique ID."
+    D "The tags provide a way to customize the cache."
+
+    tagging entity {
+        tag "enable" {
+            D "Enables a cache on an entity."
+        }
+        tag "size" {
+            D "Allows the specification of a cache size."
+            value int32 {
+                D "The value is the max number of entries to allow in the cache."
+            }
+        }
+        tag "type" {
+            D "Allows the specification of the type of cache."
+            value string {
+                D "The value defines the type of cache used. Currently supported is: \"lru\" (least recently used)."
+            }
+        }
+    }
+}

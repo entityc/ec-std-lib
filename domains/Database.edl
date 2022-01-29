@@ -1,0 +1,9 @@
+domain Database {
+
+    D summary, main "The SQL that represents the database for this microservice is controlled by this domain."
+
+    namespace db.migration
+    naming entity, attribute, relationship {
+        method underscoreLowercase
+    }
+}

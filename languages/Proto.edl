@@ -1,0 +1,29 @@
+language proto {
+    types {
+        boolean bool
+        int32 int32
+        int64 int64
+        float float
+        double double
+        string "string"
+        uuid "string"
+        date long
+        byte "bytes"
+        enum enum
+    }
+
+    comments {
+        line "//"
+        blockStart "/*"
+        blockEnd "*/"
+    }
+
+    keywords {
+        syntax import public package
+        double float int32 int64 uint32 uint64 sint32 sint64 fixed32 fixed64 sfixed32
+        bool string bytes
+        map reserved enum message service
+        repeated
+        option
+    }
+}

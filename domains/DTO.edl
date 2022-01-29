@@ -1,0 +1,38 @@
+domain DTO
+{
+    D summary, main "The Data Transfer Object domain controls how entities are represented between the server and"
+    D summary, main "the client."
+    D "There can be multiple representations - each should define their own domain that"
+    D "extends this domain."
+
+    naming entity {
+        // use default naming for entities
+    }
+
+    view Default {
+
+        D "The construction of DTO entity classes or message definitions is controlled by this view."
+
+        // includes everything
+    }
+
+    view Reference {
+
+        D "In a DTO structure where all relationships are included as objects, if you want to include"
+        D "just a unique ID of the object instead of all its fields, this view will accomplish that."
+
+        include primarykey
+        attributes { exclude }
+        relationships { exclude }
+    }
+
+    view APIGet {
+
+        D "The Get Methods for the API should by default use this view. Each entity can choose to override"
+        D "this view if they choose."
+
+        relationships {
+            include to-one with view Reference
+        }
+    }
+}

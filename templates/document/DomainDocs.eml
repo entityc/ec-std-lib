@@ -1,0 +1,91 @@
+$[D summary, main "This template will specifically document the domains in a space. Understanding the domains"]
+$[D summary, main "is important for template developers and architects developing a new application."]
+
+$[function documentDomain
+  D "Generates documentation for a specified domain."
+  (domain D "The domain to document."
+  )]
+<a name="${domain.name}-heading"></a>
+## ${domain.name}
+
+    $[if domain.hasDescription]
+${domain.description}
+
+    $[/if]
+    $[if domain.hasEntityTagDefs]
+### Entity Tags
+
+These tags can be placed on an entity itself.
+
+| Tag | Description |
+|:---|:---|
+        $[foreach tagdef in domain.entityTagDefs|sort]
+|`${tagdef.tag}`|${tagdef.description}|
+        $[/foreach]
+    $[/if]
+
+    $[if domain.hasAttributeTagDefs]
+### Attribute Tags
+
+These tags can be placed on the attribute of an entity.
+
+| Tag | Description |
+|:---|:---|
+        $[foreach tagdef in domain.attributeTagDefs|sort]
+|`${tagdef.tag}`|${tagdef.description}|
+        $[/foreach]
+    $[/if]
+
+    $[if domain.hasRelationshipTagDefs]
+### Relationship Tags
+
+These tags can be placed on the relationships of an entity.
+
+| Tag | Description |
+|:---|:---|
+        $[foreach tagdef in domain.relationshipTagDefs|sort]
+|`${tagdef.tag}`|${tagdef.description}|
+        $[/foreach]
+    $[/if]
+$[/function]
+
+$[file "" "README" "md"]
+    $[if space.hasDomainTagged("feature")]
+# Feature Domains
+
+A feature domain represents a domain that can implement a specific feature in your application.
+
+| Feature Domain | Description |
+|:---|:---|
+        $[foreach domain in space.domainsTagged("feature")]
+|[`${domain.name}`](#${domain.name}-heading)|${domain.summary}|
+        $[/foreach]
+
+Each of the feature domains are explained in more detail in their own section below.
+
+        $[foreach domain in space.domainsTagged("feature")]
+            $[call documentDomain(domain:domain)]
+
+        $[/foreach]
+
+    $[/if]
+# Base Domains
+
+These are domains that provide the foundation for this library.
+
+| Domain | Description |
+|:---|:---|
+    $[foreach domain in space.domains|sort]
+        $[if domain.hasTag("feature")]$[continue]$[/if]
+|`${domain.name}`|${domain.summary}|
+    $[/foreach]
+$[*
+Each of these domains will be described in more detail in the below sections.
+
+$[foreach domain in space.domains|sort]
+$[if domain.hasTag("feature")]$[continue]$[/if]
+$[call documentDomain(domain:domain)]
+
+$[/foreach]
+*]
+$[/file]

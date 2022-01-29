@@ -1,0 +1,22 @@
+domain Model {
+
+    namespace space model
+
+    D summary, main "Data is moved to and from the database with Java objects. This domain controls how these Java classes"
+    D summary, main "are generated."
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+
+    naming entity {}
+    naming attribute {
+        primarykey id
+    }
+
+    default view Default {
+        relationships {
+            include to-one with primarykey
+        }
+    }
+}
