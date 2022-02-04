@@ -66,7 +66,15 @@ $[function documentFunction
    D "The function to document." 
   )
 ]
-#### ${fun.name|title} - ${fun.name}()
+#### ${fun.name|title}
+
+$[let outputDecl=""]
+$[if fun.hasOutputs]
+$[capture outputDecl] -> ($[foreach arg in fun.outputArguments]$[if !arg#first], $[/if]${arg.name}$[/foreach])$[/capture]
+$[/if]
+```
+${fun.name}($[foreach arg in fun.inputArguments]$[if !arg#first], $[/if]${arg.name}$[/foreach])${outputDecl}
+```
 
     $[if fun.hasDescription]
 ${fun.description}
@@ -104,14 +112,13 @@ $[function documentTemplate
    directory
   )
 ]
-
 <a name="${template|name|dashes|lowercase}"></a>
 ## ${template|title}
 
     $[if template.hasDescription]
 ${template.description}
-    $[/if]
 
+    $[/if]
     $[if template.hasReferencedTags || template.hasReferencedDomains]
 | |References|
 |---|---|
@@ -121,12 +128,12 @@ ${template.description}
         $[if template.hasReferencedDomains]
 | **Domains** |$[foreach domainName in template.referencedDomainNames]`${domainName}` $[/foreach]|
         $[/if]
-    $[/if]
 
+    $[/if]
     $[if template.hasDescriptionInCategory("detail")]
 ${template.descriptionInCategory("detail")}
-    $[/if]
 
+    $[/if]
     $[if template.hasImportedTemplates]
 ### Imported Templates
 
@@ -197,8 +204,8 @@ Write a nice introduction here.
             $[let functionOnlyTemplates = @[]@]
             $[let workerTemplates = @[]@]
             $[foreach templateFile in directory.filesWithExtension("eml")]
-                $[let template = configuration.parseTemplate(templateFile)]
-                $[if !template.hasDescriptionInCategory("summary")]$[continue]$[/if]
+                $[let template = configuration.parseTemplate(templateFile, "thisRepo")]
+                $[if template == null || !template.hasDescriptionInCategory("summary")]$[continue]$[/if]
                 $[do parsedTemplates.add(template)]
                 $[if template.hasOnlyFunctions]
                     $[do functionOnlyTemplates.add(template)]
@@ -216,10 +223,9 @@ Write a nice introduction here.
                 $[foreach template in workerTemplates.values|sort]
 | [`${template.name}`](#${template.name|dashes|lowercase}) | ${template.descriptionInCategory("summary")} |
                 $[/foreach]
+
             $[/if]
-
             $[if functionOnlyTemplates.count > 0]
-
 The following templates only contain functions.
 
 |Template|Description|
@@ -227,8 +233,8 @@ The following templates only contain functions.
                 $[foreach template in functionOnlyTemplates.values|sort]
 | [`${template.name}`](#${template.name|dashes|lowercase}) | ${template.descriptionInCategory("summary")} |
                 $[/foreach]
-            $[/if]
 
+            $[/if]
 Each of the template files will be covered in more detail below.
 
             $[foreach template in parsedTemplates.values|sort]

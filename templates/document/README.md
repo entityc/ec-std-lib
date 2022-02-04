@@ -15,9 +15,7 @@ The following templates are used to create documentation.
 | [`Markdown`](#markdown) | This template generates documentation in Markdown format of the modules, entities and attributes of a particular space. |
 | [`TemplateMarkdown`](#template-markdown) | This template creates documentation for templates in markdown format. It does this for an entire directory tree. |
 
-
 Each of the template files will be covered in more detail below.
-
 
 <a name="confluence"></a>
 ## Confluence
@@ -29,10 +27,13 @@ This template generates documentation in Confluence format of the modules, entit
 | **Tags** |`asset:collection` `asset:file` |
 | **Domains** |`Model` `DTO` |
 
-
 ### Functions
 
-#### Asset Section - assetSection()
+#### Asset Section
+
+```
+assetSection(attribute, collectionAttribute)
+```
 
 ##### Inputs
 
@@ -40,7 +41,6 @@ This template generates documentation in Confluence format of the modules, entit
 |---|---|
 |`attribute`||
 |`collectionAttribute`||
-
 
 
 
@@ -53,10 +53,13 @@ This template will specifically document the domains in a space. Understanding t
 |---|---|
 | **Tags** |`feature` |
 
-
 ### Functions
 
-#### Document Domain - documentDomain()
+#### Document Domain
+
+```
+documentDomain(domain)
+```
 
 Generates documentation for a specified domain.
 
@@ -65,7 +68,6 @@ Generates documentation for a specified domain.
 |Name|Description|
 |---|---|
 |`domain`|The domain to document.|
-
 
 
 
@@ -78,18 +80,18 @@ This template generates documentation in Markdown format of the modules, entitie
 |---|---|
 | **Domains** |`Model` `DTO` |
 
-
-
 <a name="template-markdown"></a>
 ## Template Markdown
 
 This template creates documentation for templates in markdown format. It does this for an entire directory tree. At each directory level it looks for template files and if any are found it generates a `README.md` file documenting all the templates of the directory.
 
-
-
 ### Functions
 
-#### Document Author - documentAuthor()
+#### Document Author
+
+```
+documentAuthor(author)
+```
 
 Given a reference to an author, this will extract information such as the authoring to outlets.
 
@@ -101,7 +103,11 @@ Given a reference to an author, this will extract information such as the author
 
 
 
-#### Document Publisher - documentPublisher()
+#### Document Publisher
+
+```
+documentPublisher(publisher)
+```
 
 Given a reference to a publisher, this will extract information such as its outlets.
 
@@ -113,7 +119,11 @@ Given a reference to a publisher, this will extract information such as its outl
 
 
 
-#### Document Template - documentTemplate()
+#### Document Template
+
+```
+documentTemplate(template, rootDirectory, directory)
+```
 
 Given a reference to a template, this will extract information such as its functions, descriptions like this, etc. and build a markdown document of the template.
 
@@ -127,7 +137,11 @@ Given a reference to a template, this will extract information such as its funct
 
 
 
-#### Document Directory - documentDirectory()
+#### Document Directory
+
+```
+documentDirectory(configuration, rootDirectory, directory, recursive)
+```
 
 Looks in a specified directory and if there are any templates there it creates a README file that documents those templates.
 
@@ -142,7 +156,11 @@ Looks in a specified directory and if there are any templates there it creates a
 
 
 
-#### Document Function - documentFunction()
+#### Document Function
+
+```
+documentFunction(fun)
+```
 
 Given a reference to a function, this will extract information such calls to other functions, descriptions like this, etc. and build a markdown document of the function.
 

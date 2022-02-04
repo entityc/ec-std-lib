@@ -12,9 +12,7 @@ Write a nice introduction here.
 |---|---|
 | [`ModelTemplate`](#model-template) | This template builds what are called Model classes. |
 
-
 Each of the template files will be covered in more detail below.
-
 
 <a name="model-template"></a>
 ## Model Template
@@ -25,10 +23,13 @@ This template builds what are called Model classes. A Model class is used to rep
 |---|---|
 | **Domains** |`Model` |
 
-
 ### Functions
 
-#### Generate Dto - generateDto()
+#### Generate Dto
+
+```
+generateDto(entityOrView, module)
+```
 
 A function that generates the DTO class for just one entity or view.
 
