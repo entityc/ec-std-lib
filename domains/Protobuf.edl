@@ -18,6 +18,10 @@ domain Protobuf {
         method underscoreLowercase
     }
 
+    naming relationship {
+        method underscoreLowercase
+    }
+
     naming enumItem {
         method underscoreUppercase
     }

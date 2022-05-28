@@ -82,6 +82,7 @@ These tags can be placed on an entity itself.
 |`edit`|When an entity is tagged with this tag the admin console home page will provide a button to allow you create new objects of this entity.|
 |`headline:prefix`|The headline is part of the detail page for an entity. Placing this tag on an entity means that the entity name will be part of the header part of this headline.|
 |`home`|Placing this tag on an entity designates it to be included on the home page of the admin console.|
+|`paging:size`|When an admin "home" page is created for an entity, the value assigned to this tag is used as the number of items per page to show. As well, pagination UI is included so the user can advance or go back pages.|
 
 ### Attribute Tags
 
