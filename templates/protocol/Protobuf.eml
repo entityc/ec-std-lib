@@ -1,4 +1,4 @@
-$[language protobuf]
+$[language proto]
 $[domain Protobuf]
 $[D summary, detail "This template generates protocol files for Protobuf of the modules and entities of a"]
 $[D summary, detail "particular space."]

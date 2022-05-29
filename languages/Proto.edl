@@ -7,7 +7,7 @@ language proto {
         double double
         string "string"
         uuid "string"
-        date long
+        date uint64
         byte "bytes"
         enum enum
     }
