@@ -49,7 +49,7 @@ ${author.description}
         $[let intermediates = author.hasChildOutletsWithIntermediateParents]
 This author publishes to the following $[if intermediates]extended publishers and $[/if]outlets:
 
-$[if intermediates]|Extended Publisher$[/if]| Outlet | Description | Phase | Scope
+$[if intermediates]|Extended Publisher$[/if]| Outlet | Description | Phase | Scope |
 $[if intermediates]|---$[/if]|---|---|---|---|
         $[foreach childAuthor in author.childOutletAuthors]
             $[let childDescription = childAuthor.hasDescription ? childAuthor.description:"*no description*"]
@@ -213,6 +213,8 @@ Write a nice introduction here.
                     $[do workerTemplates.add(template)]
                 $[/if]
             $[/foreach]
+
+> This document was created by template: `${__template.uri}`
 
 <a name="template-summary"></a>
 ## Template Summary
