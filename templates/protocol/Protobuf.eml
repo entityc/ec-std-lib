@@ -1,12 +1,13 @@
-$[language proto]
-$[domain Protobuf]
-$[D summary, detail "This template generates protocol files for Protobuf of the modules and entities of a"]
-$[D summary, detail "particular space."]
-$[foreach space.modules]
-    $[load proto "" module|domain|name "proto"]
-    $[file "" module|domain|name "proto"]
+$[ language proto ]
+$[ domain Protobuf ]
+$[ foreach module in space.modules ]
+    $[ load proto "" module|domain|name "proto" ]
+    $[ file "" module|domain|name "proto" ]
+        $[ publisher org.entityc.ecstdlib.protobuf ]
 syntax = "proto2";
 package ${proto_package};
+
+option optimize_for = LITE_RUNTIME;
 
 option java_package = "${java_package}";
 
@@ -25,27 +26,29 @@ option cc_generic_services = false;
 option java_generic_services = false;
 option py_generic_services = false;
 
-$[receive distinct imports]
-        $[foreach refMod in module.referencedModules]
-$[send imports]
+$[ receive distinct imports ]
+            $[ foreach refMod in module.referencedModules ]
+$[ send imports ]
 import "${refMod|domain|name}.proto";
-$[/send]
-        $[/foreach]
+$[/ send ]
+            $[/ foreach ]
+$[ outlet imports ]
+$[/ outlet ]
 
-        $[foreach module.enums]
-            $[if enum.hasParentEntity || !enum.hasParentModule]$[continue]$[/if]
-            $[if enum.hasDescription]
+            $[ foreach enum in module.enums if !enum.isExtern ]
+                $[ if enum.hasParentEntity || !enum.hasParentModule ]$[ continue ]$[/ if ]
+                $[ if enum.hasDescription ]
 // ${enum.description|wrap}
-            $[/if]
+                $[/ if ]
 enum ${enum|domain|name} {
-            $[foreach enum.items]
+                $[ foreach enum.items ]
     ${item|domain|name} = ${item.value};
-            $[/foreach]
+                $[/ foreach ]
 }
 
-        $[/foreach]
-        $[foreach module.entities]
-            $[if entity.isImplicit || entity.isExtern]$[continue]$[/if]
+            $[/ foreach ]
+            $[ foreach module.entities ]
+                $[ if entity.isImplicit || entity.isExtern ]$[ continue ]$[/ if ]
 //
 // ${entity|title} List
 //
@@ -58,77 +61,78 @@ message ${entity|domain|name}List {
 //
 // ${entity|title}
 //
-            $[if entity.hasDescription]
+                $[ if entity.hasDescription ]
 // ${entity.description|wrap}
 //
-            $[/if]
+                $[/ if ]
 message ${entity|domain|name} {
-            $[foreach entity.enums]
+                $[ foreach entity.enums ]
     enum ${enum|domain|name} {
-                $[foreach enum.items]
+                    $[ foreach enum.items ]
         ${item|domain|name} = ${item.value};
-                $[/foreach]
+                    $[/ foreach ]
     }
 
-            $[/foreach]
-            $[if entity.hasPrimaryKey]
-                $[let pkAttribute = entity.primaryKeyAttribute]
+                $[/ foreach ]
+                $[ if entity.hasPrimaryKey ]
+                    $[ let pkAttribute = entity.primaryKeyAttribute ]
     // PRIMARY KEY
-                $[if pkAttribute.hasDescription]
+                    $[ if pkAttribute.hasDescription ]
     // ${pkAttribute.description}
-                $[/if]
+                    $[/ if ]
     optional ${pkAttribute.type|language} ${pkAttribute|domain|name} = ${entity.fieldNumber(pkAttribute)} /*[pk=${pkAttribute.name}]*/;
-            $[/if]
-            $[if entity.hasAttributes]
+                $[/ if ]
+                $[ if entity.hasAttributes ]
     // ATTRIBUTES
-            $[/if]
-            $[foreach attribute in entity.attributes]
-                $[if attribute.hasDescription]
+                $[/ if ]
+                $[ foreach attribute in entity.attributes ]
+                    $[ if attribute.hasDescription ]
     // ${attribute.description}
-                $[/if]
+                    $[/ if ]
     ${attribute.isArray ? "repeated":"optional"} ${attribute.type|language} ${attribute|domain|name} = ${entity.fieldNumber(attribute)} /*[a=${attribute.name}]*/;
-            $[/foreach]
-            $[let showRelationshipComment = true]
-            $[foreach relationship in (entity|domain:Protobuf|view:Proto).relationships]
-                $[let _toEntity = relationship.to.entity.entity]
-                $[if _toEntity.isImplicit || _toEntity.isExtern || _toEntity.isIncluded]$[continue]$[/if]
-                $[let includeChildEntities = _toEntity.space.name == entity.space.name && !_toEntity.isIncluded]
-                $[let _toView = relationship.to.view]
-                $[if showRelationshipComment]
+                $[/ foreach ]
+                $[ let showRelationshipComment = true ]
+                $[ foreach relationship in (entity|domain:Protobuf|view:Proto).relationships ]
+                    $[ let _toEntity = relationship.to.entity.entity ]
+                    $[ if _toEntity.isImplicit || _toEntity.isExtern || _toEntity.isIncluded ]$[ continue ]$[/ if ]
+                    $[ let includeChildEntities = _toEntity.space.name == entity.space.name && !_toEntity.isIncluded ]
+                    $[ let _toView = relationship.to.view ]
+                    $[ if showRelationshipComment ]
     // RELATIONSHIPS
-                    $[let showRelationshipComment = false]
-                $[/if]
-                $[if relationship.hasDescription]
+                        $[ let showRelationshipComment = false ]
+                    $[/ if ]
+                    $[ if relationship.hasDescription ]
     // ${relationship.description}
-                $[/if]
-                $[if relationship.to.isOne]
-                    $[let typeName = "string"]
-                    $[if _toEntity.pkType != null]
-                        $[let typeName = _toEntity.pkType|language]
-                    $[/if]
-                    $[if !includeChildEntities || relationship.isWithPrimaryKey]
+                    $[/ if ]
+                    $[ if relationship.to.isOne ]
+                        $[ let typeName = "string" ]
+                        $[ if _toEntity.pkType != null ]
+                            $[ let typeName = _toEntity.pkType|language ]
+                        $[/ if ]
+                        $[ if !includeChildEntities || relationship.isWithPrimaryKey ]
     optional ${typeName} ${relationship|name}_id = ${entity.fieldNumberByRelationship(relationship.relationship)} /*[r=${relationship.relationshipName}]*/;
-                    $[else]
-                        $[if _toEntity.module.name != module.name]
-$[send imports]
+                        $[ else ]
+                            $[ if _toEntity.module.name != module.name ]
+$[ send imports ]
 import "${_toEntity.module|domain|name}.proto";
-$[/send]
-                        $[/if]
+$[/ send ]
+                            $[/ if ]
     optional ${_toEntity.name} ${relationship|name} = ${entity.fieldNumberByRelationship(relationship.relationship)} /*[r=${relationship.relationshipName}]*/;
-                    $[/if]
-                $[elseif relationship.to.isMany]
-                    $[if includeChildEntities]
-                        $[if _toEntity.module.name != module.name]
-$[send imports]
+                        $[/ if ]
+                    $[ elseif relationship.to.isMany ]
+                        $[ if includeChildEntities ]
+                            $[ if _toEntity.module.name != module.name ]
+$[ send imports ]
 import "${_toEntity.module|domain|name}.proto";
-$[/send]
-                        $[/if]
+$[/ send ]
+                            $[/ if ]
     repeated ${_toEntity|domain|name} ${relationship.name} = ${entity.fieldNumberByRelationship(relationship.relationship)} /*[r=${relationship.relationshipName}]*/;
-                    $[/if]
-                $[/if]
-            $[/foreach]
+                        $[/ if ]
+                    $[/ if ]
+                $[/ foreach ]
 }
 
-        $[/foreach]
-    $[/file]
-$[/foreach]
+            $[/ foreach ]
+        $[/ publisher ]
+    $[/ file ]
+$[/ foreach ]
