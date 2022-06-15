@@ -7,8 +7,6 @@ $[ foreach module in space.modules ]
 syntax = "proto2";
 package ${proto_package};
 
-option optimize_for = LITE_RUNTIME;
-
 option java_package = "${java_package}";
 
 //
