@@ -94,7 +94,7 @@ message ${entity|domain|name} {
                 $[ let showRelationshipComment = true ]
                 $[ foreach relationship in (entity|domain:Protobuf|view:Proto).relationships ]
                     $[ let _toEntity = relationship.to.entity.entity ]
-                    $[ if _toEntity.isImplicit || _toEntity.isExtern || _toEntity.isIncluded ]$[ continue ]$[/ if ]
+                    $[ if _toEntity.isImplicit || _toEntity.isExtern || (relationship.to.isMany && _toEntity.isIncluded)]$[ continue ]$[/ if ]
                     $[ let includeChildEntities = _toEntity.space.name == entity.space.name && !_toEntity.isIncluded ]
                     $[ let _toView = relationship.to.view ]
                     $[ if showRelationshipComment ]
