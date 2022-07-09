@@ -5,6 +5,8 @@ The following templates are used to create documentation.
 
 [//]: # ( =====preserve===== end-Introduction ===== )
 
+> This document was created by template: `TemplateMarkdown`
+
 <a name="template-summary"></a>
 ## Template Summary
 

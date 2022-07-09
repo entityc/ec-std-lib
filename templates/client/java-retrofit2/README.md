@@ -5,6 +5,8 @@ Write a nice introduction here.
 
 [//]: # ( =====preserve===== end-Introduction ===== )
 
+> This document was created by template: `TemplateMarkdown`
+
 <a name="template-summary"></a>
 ## Template Summary
 
