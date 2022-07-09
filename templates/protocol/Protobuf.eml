@@ -42,7 +42,7 @@ $[/ outlet ]
                 $[/ if ]
 enum ${enum|domain|name} {
                 $[ foreach enum.items ]
-    ${enum.name}_${item|domain|name} = ${item.value};
+    ${enum|domain|name}_${item|domain|name} = ${item.value};
                 $[/ foreach ]
 }
 

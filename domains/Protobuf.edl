@@ -26,61 +26,10 @@ domain Protobuf {
         method underscoreUppercase
     }
 
-    enum GameTextureType {
-        naming enumItem {
-            method underscoreUppercase
-            suffix "_TEXTURE"
-        }
-    }
-
     view Proto {
         relationships {
             include to-one
             include to-many
         }
     }
-
-/*
-    entity GameTerrainRelease {
-        view Proto {
-            relationships {
-                include to-many entity GameTerrainMapRelease
-            }
-        }
-    }
-
-    entity GameTerrainMapRelease {
-        view Proto {
-            relationships {
-                include to-one with primarykey
-            }
-        }
-    }
-
-    entity GameMapRelease {
-        view Proto {
-            relationships {
-                include to-one
-                include to-many
-            }
-        }
-    }
-
-    entity GameMap {
-        view Proto {
-            relationships {
-                exclude to-many releases
-                exclude to-many versions
-            }
-        }
-    }
-    entity MapRouteVersionRelease {
-        view Proto {
-            relationships {
-                include to-one entity MapRoute
-                include to-one entity MapRouteVersion
-            }
-        }
-    }
-    */
 }
