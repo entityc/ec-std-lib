@@ -1,6 +1,6 @@
 $[version 0.5.0]
 $[language md]
-$[domain DTO]
+$[domain JSONDTO]
 $[D summary, main "This template generates documentation in Markdown format of the modules, entities and attributes"]
 $[D summary, main "of a particular space."]
 $[foreach space.modules]

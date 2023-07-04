@@ -80,7 +80,7 @@ This template generates documentation in Markdown format of the modules, entitie
 
 | |References|
 |---|---|
-| **Domains** |`Model` `DTO` |
+| **Domains** |`Model` `JSONDTO` |
 
 <a name="template-markdown"></a>
 ## Template Markdown
