@@ -124,6 +124,18 @@ domain AdminUI {
           D "When displaying a selected to-one relationship object, this tag should be assigned to the name of the"
           D "attribute of the selected object that should be used."
         }
+        tag "filter:attribute" {
+          D "When tagging a relationship with this tag, you are requesting to filter based on a particular"
+          D "attribute value of the objects on the other side of the relationship. **Currently only attributes"
+          D "of type enum are supported. The attribute value is specified with a tag of `filter:value` When the admin"
+          D "panel lets you edit this relationship, it will present you with some kind of pulldown list - and it will"
+          D "be filtered based on the value you specified."
+        }
+        tag "filter:value" {
+          D "This is used in conjunction with `filter:attribute` to provide a value to filter by. For instance, if"
+          D "you want to filter by an enum item of say `EARTH` on an attribute named `planet` you would have two"
+          D "tags: `T \"filter:attribute\" = \"planet\", \"filter:value\" = \"EARTH\"`."
+        }
     }
 
     naming attribute {

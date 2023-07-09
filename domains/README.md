@@ -106,6 +106,8 @@ These tags can be placed on the relationships of an entity.
 |:---|:---|
 |`detail`|Tagging a relationship with this tag will ensure that it will be included on the admin console detail page for the corresponding entity.|
 |`display:attribute`|When displaying a selected to-one relationship object, this tag should be assigned to the name of the attribute of the selected object that should be used.|
+|`filter:attribute`|When tagging a relationship with this tag, you are requesting to filter based on a particular attribute value of the objects on the other side of the relationship. **Currently only attributes of type enum are supported. The attribute value is specified with a tag of `filter:value` When the admin panel lets you edit this relationship, it will present you with some kind of pulldown list - and it will be filtered based on the value you specified.|
+|`filter:value`|This is used in conjunction with `filter:attribute` to provide a value to filter by. For instance, if you want to filter by an enum item of say `EARTH` on an attribute named `planet` you would have two tags: `T "filter:attribute" = "planet", "filter:value" = "EARTH"`.|
 
 <a name="Security-heading"></a>
 ## Security
