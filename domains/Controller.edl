@@ -15,7 +15,7 @@ domain APIPath {
 
     D summary, main "How URL paths are constructed in the API is controlled by this domain."
 
-    naming entity, attribute {
+    naming entity, attribute, relationship {
         method dashesLowercase
     }
 }
