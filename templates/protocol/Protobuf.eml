@@ -27,11 +27,11 @@ option java_generic_services = false;
 option py_generic_services = false;
 
 $[ receive distinct imports ]
-            $[ foreach refMod in module.referencedModules ]
+$[* foreach refMod in module.referencedModules ]
 $[ send imports ]
 import "${refMod|domain|name}.proto";
 $[/ send ]
-            $[/ foreach ]
+            $[/ foreach *]
 $[ outlet imports ]
 $[/ outlet ]
 
@@ -90,11 +90,24 @@ message ${entity|domain|name} {
     // ${attribute.description}
                     $[/ if ]
     ${attribute.isArray ? "repeated":"optional"} ${attribute.type|language} ${attribute|domain|name} = ${entity.fieldNumber(attribute)} /*[a=${attribute.name}]*/;
+                    $[ if attribute.type.isEntityType && attribute.typeEntity.module.name != module.name ]
+$[ send imports ]
+import "${attribute.typeEntity.module|domain|name}.proto";
+$[/ send ]
+                    $[ elseif attribute.type.isEnumType && attribute.type.module.name != module.name ]
+$[ send imports ]
+import "${attribute.type.module|domain|name}.proto";
+$[/ send ]
+                    $[/ if ]
                 $[/ foreach ]
                 $[ let showRelationshipComment = true ]
                 $[ foreach relationship in (entity|domain:Protobuf|view:Proto).relationships ]
                     $[ let _toEntity = relationship.to.entity.entity ]
-                    $[ if _toEntity.isImplicit || _toEntity.isExtern || (relationship.to.isMany && _toEntity.isIncluded)]$[ continue ]$[/ if ]
+                    $[ if _toEntity.isImplicit || _toEntity.isExtern || relationship.to.isMany && _toEntity.isIncluded ]$[ continue ]$[/ if ]
+                    $[ if (relationship|domain:Protobuf).hasTag("ignore") ]$[ continue ]$[/ if ]
+                    $[ if relationship.relationship.isParent && _toEntity.module.name != entity.module.name ]
+                        $[ continue ]
+                    $[/ if ]
                     $[ let includeChildEntities = _toEntity.space.name == entity.space.name && !_toEntity.isIncluded ]
                     $[ let _toView = relationship.to.view ]
                     $[ if showRelationshipComment ]

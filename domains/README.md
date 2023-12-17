@@ -277,6 +277,8 @@ These are domains that provide the foundation for this library.
 |`Model`|Data is moved to and from the database with Java objects. This domain controls how these Java classes are generated.|
 |`Protobuf`|The classes created for this domain are responsible for how the protocol file is created.|
 |`ProtobufDTO`|The Game is written to use Protobuf as the format medium of data. This domain controls how classes used for Protobuf based formatting will be generated.|
+|`ReleasedJSONDTO`|This domain is specific for creating JSON DTO classes that represent released versioned objects.|
+|`ReleasedModel`|Data is moved to and from the database with Java objects. This domain controls how these Java classes are generated.|
 |`Repository`|The classes generated for this domain are responsible for moving data to and from the database.|
 |`Service`|The classes generated for this domain provide the business logic for the application.|
 |`StaticLocalization`|Static Localization refers to localized text that is part of the application itself and is **not** part of the user content.|

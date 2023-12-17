@@ -26,6 +26,17 @@ domain DTO
         relationships { exclude }
     }
 
+    view Identification {
+
+        D "In a DTO structure where all relationships are included as objects, if you want to include"
+        D "just the unique IDs (primary key and an attribute called `identifier`) of the object instead of"
+        D "all its fields, this view will accomplish that."
+
+        include primarykey
+        attributes { exclude } //include (identifier)
+        relationships { exclude }
+    }
+
     view APIGet {
 
         D "The Get Methods for the API should by default use this view. Each entity can choose to override"

@@ -18,3 +18,24 @@ domain JSONDTO extends DTO
         method underscoreUppercase
     }
 }
+
+domain ReleasedJSONDTO extends DTO
+{
+    namespace space dto
+
+    D summary, main "This domain is specific for creating JSON DTO classes that represent"
+    D summary, main "released versioned objects."
+
+    naming entity {
+        prefix "Released"
+        suffix "Dto"
+    }
+
+    naming attribute {
+        primarykey id
+    }
+
+    naming enumItem {
+        method underscoreUppercase
+    }
+}

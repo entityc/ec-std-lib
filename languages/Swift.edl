@@ -1,0 +1,52 @@
+language swift {
+    self this
+    comments {
+        line "//"
+        blockStart "/*"
+        blockEnd "*/"
+    }
+    types {
+        boolean Bool
+        int32 Int
+        int64 Int64
+        float Float
+        string String
+        date Date nullable
+        uuid UUID nullable
+        array "[Any]" nullable
+        map "[String: Any]" nullable
+        enum enum nullable
+        byte Data nullable
+    }
+    operators {
+        plus "+"
+        minus "-"
+        times "*"
+        divide "/"
+        modulo "%"
+        logical_not "!"
+        logical_and "&&"
+        logical_or "||"
+        bitwise_not "~"
+        bitwise_and "&"
+        bitwise_or "|"
+        bitwise_xor "^"
+        is_equal "=="
+        not_equal "!="
+        greater_than ">"
+        greater_than_or_equal ">="
+        less_than "<"
+        less_than_or_equal "<="
+        select "?"
+        dot "."
+    }
+    keywords {
+        class enum extension func import init let var
+        struct protocol typealias static self super
+        if else for while break continue return
+        switch case default where
+    }
+    functions {
+        count(list obj) "${obj}.count"
+    }
+}
